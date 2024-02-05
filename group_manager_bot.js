@@ -6,7 +6,7 @@ dotenv.config();
 
 const bot = new TelegramBot(process.env.BOT_TOKEN, { polling: true });
 
-
+let voiceChatId; // Variable to store the ongoing voice chat ID
 
 // Handle /start command
 bot.onText(/\/start/, (msg) => {
@@ -51,6 +51,65 @@ bot.onText(/\/report (.+)/, (msg, match) => {
 
   bot.sendMessage(chatId, `User ${reportedUserId} has been reported.`);
 });
+
+// Handle /banall command
+bot.onText(/\/banall/, (msg) => {
+  const chatId = msg.chat.id;
+
+  // Check if the sender is an admin or has the necessary permissions
+  const senderId = msg.from.id;
+  bot.getChatMember(chatId, senderId)
+    .then((chatMember) => {
+      if (chatMember.status === 'administrator' || chatMember.status === 'creator') {
+        // Get all members in the chat
+        bot.getChatMembersCount(chatId).then((count) => {
+          for (let i = 0; i < count; i++) {
+            bot.getChatMember(chatId, i).then((member) => {
+              const memberId = member.user.id;
+              if (memberId !== senderId) {
+                bot.kickChatMember(chatId, memberId);
+              }
+            });
+          }
+          bot.sendMessage(chatId, 'All members have been banned.');
+        });
+      } else {
+        bot.sendMessage(chatId, 'You do not have the necessary permissions to use this command.');
+      }
+    })
+    .catch((error) => bot.sendMessage(chatId, `Error: ${error.message}`));
+});
+
+// Handle /startvoicechat command
+bot.onText(/\/startvoicechat/, (msg) => {
+  const chatId = msg.chat.id;
+
+  // Start a voice chat
+  bot.sendVoice(chatId, 'https://example.com/voice.ogg', { caption: 'Voice Chat Started' })
+    .then((message) => {
+      voiceChatId = message.voice.chat.id;
+      bot.sendMessage(chatId, 'Voice chat started. Use /endvoicechat to end the chat.');
+    })
+    .catch((error) => bot.sendMessage(chatId, `Error: ${error.message}`));
+});
+
+// Handle /endvoicechat command
+bot.onText(/\/endvoicechat/, (msg) => {
+  const chatId = msg.chat.id;
+
+  if (voiceChatId) {
+    // Stop the voice chat
+    bot.stopMessageLiveLocation(chatId, voiceChatId)
+      .then(() => {
+        bot.sendMessage(chatId, 'Voice chat ended.');
+        voiceChatId = undefined;
+      })
+      .catch((error) => bot.sendMessage(chatId, `Error: ${error.message}`));
+  } else {
+    bot.sendMessage(chatId, 'No active voice chat found.');
+  }
+});
+
 
 // Handle text messages
 bot.onText(/.*/, (msg) => {
