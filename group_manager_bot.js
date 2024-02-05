@@ -4,7 +4,7 @@ const dotenv = require('dotenv');
 // Load environment variables from .env file
 dotenv.config();
 
-const bot = new TelegramBot(process.env.BOT_TOKEN, { polling: true });
+const telegramBot = new TelegramBot(process.env.BOT_TOKEN, { polling: true });
 
 let voiceChatId; // Variable to store the ongoing voice chat ID
 
