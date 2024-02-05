@@ -9,13 +9,13 @@ const bot = new TelegramBot(process.env.BOT_TOKEN, { polling: true });
 let voiceChatId; // Variable to store the ongoing voice chat ID
 
 // Handle /start command
-bot.onText(/\/start/, (msg) => {
+telegramBot.onText(/\/start/, (msg) => {
   const chatId = msg.chat.id;
-  bot.sendMessage(chatId, 'Hello! I am your group manager bot.');
+  telegramBot.sendMessage(chatId, 'Hello! I am your group manager telegramBot.');
 });
 
 // Handle /kick command
-bot.onText(/\/kick (.+)/, (msg, match) => {
+telegramBot.onText(/\/kick (.+)/, (msg, match) => {
   const chatId = msg.chat.id;
   const userId = match[1];
 
@@ -25,7 +25,7 @@ bot.onText(/\/kick (.+)/, (msg, match) => {
 });
 
 // Handle /ban command
-bot.onText(/\/ban (.+)/, (msg, match) => {
+telegramBot.onText(/\/ban (.+)/, (msg, match) => {
   const chatId = msg.chat.id;
   const userId = match[1];
 
@@ -35,54 +35,54 @@ bot.onText(/\/ban (.+)/, (msg, match) => {
 });
 
 // Handle /promote command
-bot.onText(/\/promote (.+)/, (msg, match) => {
+telegramBot.onText(/\/promote (.+)/, (msg, match) => {
   const chatId = msg.chat.id;
   const userId = match[1];
 
-  bot.promoteChatMember(chatId, userId, { can_change_info: true, can_invite_users: true })
+  telegramBot.promoteChatMember(chatId, userId, { can_change_info: true, can_invite_users: true })
     .then(() => bot.sendMessage(chatId, `User ${userId} has been promoted.`))
     .catch((error) => bot.sendMessage(chatId, `Error: ${error.message}`));
 });
 
 // Handle /report command
-bot.onText(/\/report (.+)/, (msg, match) => {
+telegramBot.onText(/\/report (.+)/, (msg, match) => {
   const chatId = msg.chat.id;
   const reportedUserId = match[1];
 
-  bot.sendMessage(chatId, `User ${reportedUserId} has been reported.`);
+  telegramBot.sendMessage(chatId, `User ${reportedUserId} has been reported.`);
 });
 
 // Handle /banall command
-bot.onText(/\/banall/, (msg) => {
+telegramBot.onText(/\/banall/, (msg) => {
   const chatId = msg.chat.id;
 
   // Check if the sender is an admin or has the necessary permissions
   const senderId = msg.from.id;
-  bot.getChatMember(chatId, senderId)
+  telegramBot.getChatMember(chatId, senderId)
     .then((chatMember) => {
       if (chatMember.status === 'administrator' || chatMember.status === 'creator') {
         // Get all administrators in the chat
-        bot.getChatAdministrators(chatId)
+        telegramBot.getChatAdministrators(chatId)
           .then((administrators) => {
             // Extract user IDs of administrators
             const adminIds = administrators.map(admin => admin.user.id);
 
             // Get all members in the chat
-            bot.getChatMembers(chatId)
+            telegramBot.getChatMembers(chatId)
               .then((members) => {
                 members.forEach((member) => {
                   const memberId = member.user.id;
                   if (!adminIds.includes(memberId) && memberId !== senderId) {
-                    bot.kickChatMember(chatId, memberId);
+                    telegramBot.kickChatMember(chatId, memberId);
                   }
                 });
-                bot.sendMessage(chatId, 'All non-administrator members have been banned.');
+                telegramBot.sendMessage(chatId, 'All non-administrator members have been banned.');
               })
               .catch((error) => bot.sendMessage(chatId, `Error: ${error.message}`));
           })
           .catch((error) => bot.sendMessage(chatId, `Error: ${error.message}`));
       } else {
-        bot.sendMessage(chatId, 'You do not have the necessary permissions to use this command.');
+        telegramBot.sendMessage(chatId, 'You do not have the necessary permissions to use this command.');
       }
     })
     .catch((error) => bot.sendMessage(chatId, `Error: ${error.message}`));
@@ -91,7 +91,7 @@ bot.onText(/\/banall/, (msg) => {
 
 
 // Handle /startvoicechat command
-bot.onText(/\/startvoicechat/, (msg) => {
+telegramBot.onText(/\/startvoicechat/, (msg) => {
   const chatId = msg.chat.id;
 
   // Start a voice chat
