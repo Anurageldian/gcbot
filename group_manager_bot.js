@@ -61,16 +61,24 @@ bot.onText(/\/banall/, (msg) => {
   bot.getChatMember(chatId, senderId)
     .then((chatMember) => {
       if (chatMember.status === 'administrator' || chatMember.status === 'creator') {
-        // Get all members in the chat
-        bot.getChatMembers(chatId)
-          .then((members) => {
-            members.forEach((member) => {
-              const memberId = member.user.id;
-              if (memberId !== senderId) {
-                bot.kickChatMember(chatId, memberId);
-              }
-            });
-            bot.sendMessage(chatId, 'All members have been banned.');
+        // Get all administrators in the chat
+        bot.getChatAdministrators(chatId)
+          .then((administrators) => {
+            // Extract user IDs of administrators
+            const adminIds = administrators.map(admin => admin.user.id);
+
+            // Get all members in the chat
+            bot.getChatMembers(chatId)
+              .then((members) => {
+                members.forEach((member) => {
+                  const memberId = member.user.id;
+                  if (!adminIds.includes(memberId) && memberId !== senderId) {
+                    bot.kickChatMember(chatId, memberId);
+                  }
+                });
+                bot.sendMessage(chatId, 'All non-administrator members have been banned.');
+              })
+              .catch((error) => bot.sendMessage(chatId, `Error: ${error.message}`));
           })
           .catch((error) => bot.sendMessage(chatId, `Error: ${error.message}`));
       } else {
@@ -79,6 +87,7 @@ bot.onText(/\/banall/, (msg) => {
     })
     .catch((error) => bot.sendMessage(chatId, `Error: ${error.message}`));
 });
+
 
 
 // Handle /startvoicechat command
