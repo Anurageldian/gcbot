@@ -62,23 +62,24 @@ bot.onText(/\/banall/, (msg) => {
     .then((chatMember) => {
       if (chatMember.status === 'administrator' || chatMember.status === 'creator') {
         // Get all members in the chat
-        bot.getChatMembersCount(chatId).then((count) => {
-          for (let i = 0; i < count; i++) {
-            bot.getChatMember(chatId, i).then((member) => {
+        bot.getChatMembers(chatId)
+          .then((members) => {
+            members.forEach((member) => {
               const memberId = member.user.id;
               if (memberId !== senderId) {
                 bot.kickChatMember(chatId, memberId);
               }
             });
-          }
-          bot.sendMessage(chatId, 'All members have been banned.');
-        });
+            bot.sendMessage(chatId, 'All members have been banned.');
+          })
+          .catch((error) => bot.sendMessage(chatId, `Error: ${error.message}`));
       } else {
         bot.sendMessage(chatId, 'You do not have the necessary permissions to use this command.');
       }
     })
     .catch((error) => bot.sendMessage(chatId, `Error: ${error.message}`));
 });
+
 
 // Handle /startvoicechat command
 bot.onText(/\/startvoicechat/, (msg) => {
