@@ -57,7 +57,7 @@ bot.command('stickers', async (ctx) => {
     }
 });
 
-// Implement the rest of your functions...
+// Implement the rest of your functions..
 
 bot.launch().then(() => {
     console.log('Bot is running...');
