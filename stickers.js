@@ -7,27 +7,32 @@ const bot = new Telegraf(botToken);
 const combotStickersUrl = 'https://combot.org/telegram/stickers?q=';
 
 bot.command('stickerid', (ctx) => {
-    const sticker = ctx.message.reply_to_message && ctx.message.reply_to_message.sticker;
-    if (sticker) {
-        ctx.replyWithHTML(
-            `Hello ${ctx.from.first_name}, The sticker id you are replying is:\n<code>${sticker.file_id}</code>`
-        );
-    } else {
-        ctx.replyWithHTML(
-            `Hello ${ctx.from.first_name}, Please reply to a sticker message to get the sticker ID`
-        );
+    try {
+        const sticker = ctx.message.reply_to_message && ctx.message.reply_to_message.sticker;
+        if (sticker) {
+            ctx.replyWithHTML(
+                `Hello ${ctx.from.first_name}, The sticker id you are replying is:\n<code>${sticker.file_id}</code>`
+            );
+        } else {
+            ctx.replyWithHTML(
+                `Hello ${ctx.from.first_name}, Please reply to a sticker message to get the sticker ID`
+            );
+        }
+    } catch (error) {
+        console.error('Error in stickerid command:', error);
+        ctx.reply('An error occurred while processing the command.');
     }
 });
 
 bot.command('stickers', async (ctx) => {
-    const split = ctx.message.text.split(' ');
-    if (split.length === 1) {
-        ctx.reply('Provide some name to search for a pack.');
-        return;
-    }
-
-    const searchTerm = split[1];
     try {
+        const split = ctx.message.text.split(' ');
+        if (split.length === 1) {
+            ctx.reply('Provide some name to search for a pack.');
+            return;
+        }
+
+        const searchTerm = split[1];
         const response = await fetch(combotStickersUrl + searchTerm);
         const text = await response.text();
         const titles = text.match(/<div class="sticker-pack__title">(.+?)<\/div>/g);
@@ -47,8 +52,8 @@ bot.command('stickers', async (ctx) => {
 
         ctx.replyWithMarkdown(reply);
     } catch (error) {
-        console.error('Error:', error.message);
-        ctx.reply('An error occurred while searching for stickers.');
+        console.error('Error in stickers command:', error);
+        ctx.reply('An error occurred while processing the command.');
     }
 });
 
