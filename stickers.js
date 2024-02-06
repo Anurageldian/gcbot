@@ -1,7 +1,7 @@
 const { Telegraf } = require('telegraf');
 const fetch = require('node-fetch');
 
-const botToken = 'YOUR_TELEGRAM_BOT_TOKEN';
+const botToken = '6718509055:AAFkvdnx2lx2FIY0-1_IymVpT2E3wQc8bfI';
 const bot = new Telegraf(botToken);
 
 const combotStickersUrl = 'https://combot.org/telegram/stickers?q=';
