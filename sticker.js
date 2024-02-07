@@ -1,5 +1,4 @@
-const { Telegraf } = require('telegraf');
-// Before:
+import { Telegraf } from 'telegraf';
 // const fetch = require('node-fetch');
 
 // After:
