@@ -4,7 +4,7 @@ import { Telegraf } from 'telegraf';
 // After:
 import fetch from 'node-fetch';
 
-require('dotenv').config(); // Load environment variables from .env file
+import { config } from 'dotenv'; // Load environment variables from .env file
 
 const botToken = process.env.TELEGRAM_BOT_TOKEN;
 const bot = new Telegraf(botToken);
