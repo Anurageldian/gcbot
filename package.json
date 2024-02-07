@@ -1,0 +1,9 @@
+{
+  "type": "module",
+  "scripts": {
+    // your scripts here
+  },
+  "dependencies": {
+    // your dependencies here
+  }
+}
