@@ -1,5 +1,10 @@
 const { Telegraf } = require('telegraf');
-const fetch = require('node-fetch');
+// Before:
+// const fetch = require('node-fetch');
+
+// After:
+import fetch from 'node-fetch';
+
 require('dotenv').config(); // Load environment variables from .env file
 
 const botToken = process.env.TELEGRAM_BOT_TOKEN;
